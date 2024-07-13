@@ -1,46 +1,28 @@
-contact_book = [
-    {
-        "name": "Rahi",
-        "phone":"0150000000",
-        "email": "rahi@example.com"
-    },
-    {
-        "name": "Ebrahim",
-        "phone":"0160000000",
-        "email": "rahi@example.com"
-    },
-    {
-        "name": "Rahi",
-        "phone":"0170000000",
-        "email": "tuhin@example.com"
-    }
-]
+import create_contact_file
+import view_all_contact_file
+ 
+# contact_book = [
+#     {
+#         "name": "Rahi",
+#         "phone":"0150000000",
+#         "email": "rahi@example.com"
+#     },
+#     {
+#         "name": "Ebrahim",
+#         "phone":"0160000000",
+#         "email": "rahi@example.com"
+#     },
+#     {
+#         "name": "Rahi",
+#         "phone":"0170000000",
+#         "email": "tuhin@example.com"
+#     }
+# ]
+
+contact_book = []
 
 
 
-def create_contact():
-    name = input("Enter Name: ")
-    phone = input("Enter Phone: ")
-    email = input("Enter email: ")
-
-    contact = {
-        "name": name,
-        "phone": phone,
-        "email": email
-    }
-
-    contact_book.append(contact)
-    print("Contact created successfully")
-
-
-def view_all_contacts():
-    for contact in contact_book:
-        print(
-            contact["name"],
-            contact["phone"],
-            contact["email"],
-            sep=" | ",
-        )
 
 
 def search_contacts():
@@ -100,9 +82,38 @@ def update_contact():
     )
 
 
+def backup_contact():
+    # take all contact and write them to a file
+    # # name, phone, email
+    # file_pointer = open('contacts.csv','wt')
+    with open('contacts.csv', 'wt') as file_pointer:
+        for contact in contact_book:
+            line = f"{contact['name']}, {contact['phone']}, {contact['email']} \n"   
+            file_pointer.write(line)
+    # file_pointer.close()
+
+    print("Contact backup successfully")
 
 
+def restore_contact():
+    # open file 
+    # read all contacts 
+    # save them to global contact book variable
 
+    contact_book.clear()
+
+    with open("contacts.csv", "r") as fp:
+        # print(type(fp.read()))
+        for line in fp.readlines():
+            line_splitted = line.strip().split(",")
+            contact = {
+                'name': line_splitted[0],
+                'phone': line_splitted[1],
+                'email': line_splitted[2]
+            }
+            
+            contact_book.append(contact)
+    print("Contact restored successfully")
 
 print("Welkcome!")
 menu_text = """
@@ -112,6 +123,8 @@ Your Options:
 3. Search Contacts
 4. Remove Contact
 5. Update Contact
+6. Backup Contact
+7. Restore Contact
 0. Exit
 """
 while(True):
@@ -119,15 +132,19 @@ while(True):
     choice = input ("Enter Your Choice: ")
 
     if choice == "1":
-        create_contact()
+        contact_book = create_contact_file.create_contact(contact_book)
     elif choice == "2":
-        view_all_contacts()
+        view_all_contact_file.view_all_contacts(contact_book)
     elif choice == "3":
         search_contacts()
     elif choice =="4":
         remove_contact()
     elif choice == "5":
         update_contact()
+    elif choice == "6":
+        backup_contact()
+    elif choice == "7":
+        restore_contact()
     elif choice == "0":
         print("Thank You!")
         break
